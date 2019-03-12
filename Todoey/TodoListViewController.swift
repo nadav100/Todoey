@@ -42,6 +42,26 @@ class TodoListViewController: UITableViewController {
         
     }
 
-
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        
+        let alert = UIAlertController(title: "alert", message: "", preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Add", style: .default) { (action) in
+            if let textField = alert.textFields?.first, textField.text != nil {
+                
+                print("\(textField.text!)")
+            }
+        }
+        
+        alert.addTextField { (textField) in
+            textField.placeholder = "enter"
+        }
+        
+        alert.addAction(action)
+        
+        present(alert, animated: true)
+        
+    }
+    
 }
 
