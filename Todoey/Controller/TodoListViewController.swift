@@ -10,7 +10,7 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
 
-    var itemsArray = ["1", "2", "3"]
+    var itemsArray = [Item]()
     
     let defaults = UserDefaults.standard
     
@@ -18,7 +18,7 @@ class TodoListViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        if let items = defaults.array(forKey: "array") as? [String] {
+        if let items = defaults.array(forKey: "array") as? [Item] {
             itemsArray = items
         }
     }
@@ -31,7 +31,10 @@ class TodoListViewController: UITableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        cell.textLabel?.text = itemsArray[indexPath.row]
+        let item = itemsArray[indexPath.row]
+        cell.textLabel?.text = item.title
+        
+        cell.accessoryType = item.done ? .checkmark : .none
         
         return cell
     }
@@ -40,11 +43,10 @@ class TodoListViewController: UITableViewController {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        let item = itemsArray[indexPath.row]
+        item.done = !item.done
+        
+        tableView.reloadRows(at: [indexPath], with: .none)
         
     }
 
@@ -55,11 +57,13 @@ class TodoListViewController: UITableViewController {
         let action = UIAlertAction(title: "Add", style: .default) { (action) in
             if let textField = alert.textFields?.first, textField.text != nil {
                 
-                self.itemsArray.append(textField.text!)
+                let newItem = Item()
+                newItem.title = textField.text!
+                self.itemsArray.append(newItem)
                 
                 self.tableView.reloadData()
                 
-                self.defaults.set(self.itemsArray, forKey: "array")
+//                self.defaults.set(self.itemsArray, forKey: "array")
             }
         }
         
